@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package dronebeat.v1;
+
+// Flight mode reported by the drone autopilot.
+enum FlightMode {
+  FLIGHT_MODE_UNSPECIFIED = 0;
+  FLIGHT_MODE_IDLE = 1;
+  FLIGHT_MODE_TAKEOFF = 2;
+  FLIGHT_MODE_MISSION = 3;
+  FLIGHT_MODE_HOVER = 4;
+  FLIGHT_MODE_RETURN_TO_HOME = 5;
+  FLIGHT_MODE_LANDING = 6;
+  FLIGHT_MODE_EMERGENCY = 7;
+}
+
+message GeoPosition {
+  double latitude = 1;   // degrees, WGS84
+  double longitude = 2;  // degrees, WGS84
+  double altitude_m = 3; // metres above takeoff point
+}
+
+// Periodic liveness + telemetry ping. Sent roughly once per second.
+message Heartbeat {
+  string drone_id = 1;
+  uint64 sequence = 2;          // monotonically increasing per drone
+  int64 sent_at_ms = 3;         // drone clock, unix epoch millis
+  FlightMode mode = 4;
+  GeoPosition position = 5;
+  float battery_pct = 6;        // 0..100
+  float ground_speed_mps = 7;
+  string firmware_version = 8;
+}
+
+message HeartbeatAck {
+  bool accepted = 1;
+  int64 server_time_ms = 2;
+  // Suggested interval until the next heartbeat; lets the server throttle clients.
+  uint32 next_interval_ms = 3;
+}
+
+message HeartbeatStreamSummary {
+  uint64 received = 1;
+  uint64 rejected = 2;
+  int64 server_time_ms = 3;
+}
+
+enum Severity {
+  SEVERITY_UNSPECIFIED = 0;
+  SEVERITY_INFO = 1;
+  SEVERITY_WARNING = 2;
+  SEVERITY_CRITICAL = 3;
+}
+
+// Out-of-band status update: faults, mission changes, operator notes.
+message StatusUpdate {
+  string drone_id = 1;
+  int64 sent_at_ms = 2;
+  Severity severity = 3;
+  string code = 4;     // machine-readable, e.g. "GPS_LOSS", "LOW_BATTERY"
+  string message = 5;  // human-readable detail
+}
+
+message StatusAck {
+  bool accepted = 1;
+  int64 event_id = 2;
+}
+
+service DroneTelemetry {
+  rpc SendHeartbeat(Heartbeat) returns (HeartbeatAck);
+  rpc StreamHeartbeats(stream Heartbeat) returns (HeartbeatStreamSummary);
+  rpc ReportStatus(StatusUpdate) returns (StatusAck);
+}
