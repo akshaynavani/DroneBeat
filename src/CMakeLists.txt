@@ -9,3 +9,8 @@ add_library(dronebeat_storage STATIC
   storage/schema.cpp
   storage/drone_repository.cpp)
 target_link_libraries(dronebeat_storage PUBLIC dronebeat_core SQLite::SQLite3)
+
+add_library(dronebeat_service STATIC
+  service/fleet_monitor.cpp
+  service/staleness_sweeper.cpp)
+target_link_libraries(dronebeat_service PUBLIC dronebeat_storage Threads::Threads)
