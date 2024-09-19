@@ -65,7 +65,7 @@ Deliverables:
 - Background `StalenessSweeper` thread emitting transition events.
 - Tests for the monitor and sweeper with a fake clock.
 
-Files: `src/service/*`, `src/grpc/*`, `tests/monitor_test.cpp`.
+Files: `src/service/*`, `src/rpc/*` (named `rpc` to avoid shadowing `<grpc/...>` headers), `tests/monitor_test.cpp`.
 
 ### Phase 4 — REST API and server binary
 Deliverables:
