@@ -20,3 +20,9 @@ add_library(dronebeat_rpc STATIC
   rpc/proto_convert.cpp
   rpc/telemetry_service.cpp)
 target_link_libraries(dronebeat_rpc PUBLIC dronebeat_service dronebeat_proto)
+
+add_library(dronebeat_rest STATIC
+  rest/json.cpp
+  rest/rest_api.cpp)
+target_link_libraries(dronebeat_rest PUBLIC dronebeat_service httplib::httplib
+                                            nlohmann_json::nlohmann_json)
