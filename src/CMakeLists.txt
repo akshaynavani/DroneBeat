@@ -26,3 +26,6 @@ add_library(dronebeat_rest STATIC
   rest/rest_api.cpp)
 target_link_libraries(dronebeat_rest PUBLIC dronebeat_service httplib::httplib
                                             nlohmann_json::nlohmann_json)
+
+add_executable(dronebeat_server server/main.cpp)
+target_link_libraries(dronebeat_server PRIVATE dronebeat_rpc dronebeat_rest)
