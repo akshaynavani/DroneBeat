@@ -11,3 +11,7 @@ gtest_discover_tests(storage_test)
 add_executable(monitor_test monitor_test.cpp)
 target_link_libraries(monitor_test PRIVATE dronebeat_service GTest::gtest_main)
 gtest_discover_tests(monitor_test)
+
+add_executable(rest_test rest_test.cpp)
+target_link_libraries(rest_test PRIVATE dronebeat_rest GTest::gtest_main)
+gtest_discover_tests(rest_test)
