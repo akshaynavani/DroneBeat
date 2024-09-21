@@ -29,3 +29,11 @@ target_link_libraries(dronebeat_rest PUBLIC dronebeat_service httplib::httplib
 
 add_executable(dronebeat_server server/main.cpp)
 target_link_libraries(dronebeat_server PRIVATE dronebeat_rpc dronebeat_rest)
+
+add_library(dronebeat_sim STATIC
+  sim/sim_config.cpp
+  sim/drone_model.cpp)
+target_link_libraries(dronebeat_sim PUBLIC dronebeat_core)
+
+add_executable(drone_sim sim/main.cpp)
+target_link_libraries(drone_sim PRIVATE dronebeat_sim dronebeat_rpc Threads::Threads)
