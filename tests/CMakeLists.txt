@@ -19,3 +19,7 @@ gtest_discover_tests(rest_test)
 add_executable(rpc_test rpc_test.cpp)
 target_link_libraries(rpc_test PRIVATE dronebeat_rpc GTest::gtest_main)
 gtest_discover_tests(rpc_test)
+
+add_executable(sim_test sim_test.cpp)
+target_link_libraries(sim_test PRIVATE dronebeat_sim dronebeat_service GTest::gtest_main)
+gtest_discover_tests(sim_test)
