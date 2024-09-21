@@ -1,0 +1,28 @@
+services:
+  server:
+    build: .
+    image: dronebeat:latest
+    env_file: .env
+    ports:
+      - "${DRONEBEAT_GRPC_HOST_PORT:-50051}:50051"
+      - "${DRONEBEAT_REST_HOST_PORT:-8080}:8080"
+    volumes:
+      - dronebeat-data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  sim:
+    image: dronebeat:latest
+    depends_on:
+      server:
+        condition: service_healthy
+    entrypoint: ["drone_sim"]
+    environment:
+      DRONEBEAT_TARGET: server:50051
+    command: ["--drones", "${SIM_DRONES:-20}", "--dropout-prob", "${SIM_DROPOUT_PROB:-0.02}"]
+
+volumes:
+  dronebeat-data:
